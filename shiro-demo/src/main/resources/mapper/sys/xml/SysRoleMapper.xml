@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shirodemo.sys.mapper.SysRoleMapper">
+    <select id="getUserRoleInfo"
+            resultType="com.example.shirodemo.sys.model.dto.UserRoleDTO">
+        select u.id,u.username,u.login_name,
+        r.id as roleId,r.name as roleName
+        from t_sys_user u
+        left join t_sys_user_role ur on u.id=ur.user_id
+        left join t_sys_role r on r.id=ur.role_id
+        where u.id=#{userId}
+        ORDER BY u.username,r.name;
+    </select>
+
+    <select id="getUserRoleList"
+            parameterType="com.example.shirodemo.sys.model.dto.SysRoleDTO"
+            resultType="com.example.shirodemo.sys.model.dto.UserRoleDTO">
+        select u.id,u.username,u.login_name,
+               r.id as roleId,r.name as roleName
+        from t_sys_user u
+                 left join t_sys_user_role ur on u.id=ur.user_id
+                 left join t_sys_role r on r.id=ur.role_id
+        where
+        <if test="id != null">
+            r.id=#{id}
+        </if>
+        <if test="userId != null">
+            u.id=#{userId}
+        </if>
+        ORDER BY u.username,r.name;
+    </select>
+
+    <select id="getRoleList"
+            parameterType="com.example.shirodemo.sys.model.dto.SysRoleDTO"
+            resultType="com.example.shirodemo.sys.model.dto.SysRoleDTO">
+        select r.*
+        from t_sys_role r
+        left join t_sys_user_role ur on r.id=ur.role_id
+        where
+        <if test="id != null">
+            r.id=#{id}
+        </if>
+        <if test="userId != null">
+            ur.user_id=#{userId}
+        </if>
+        ORDER BY r.name;
+    </select>
+
+</mapper>

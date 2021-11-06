@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shirodemo.sys.mapper.SysPermissionMapper">
+    <select id="getUserPermissionInfo" resultType="com.example.shirodemo.sys.model.dto.UserRolePermissionDTO">
+        select u.id,u.username,u.login_name,
+        r.id as roleId,r.name as roleName,
+        p.id as permissionId,p.name as permissionName,p.code as permissionCode
+        from t_sys_user u
+        left join t_sys_user_role ur on u.id=ur.user_id
+        left join t_sys_role r on r.id=ur.role_id
+        left join t_sys_role_permission rp on rp.role_id=ur.role_id
+        left join t_sys_permission p on p.id=rp.permission_id
+        where u.id=#{userId}
+        ORDER BY U.username,r.name,p.name;
+    </select>
+
+    <select id="getUserPermissionList"
+            parameterType="com.example.shirodemo.sys.model.dto.SysPermissionDTO"
+            resultType="com.example.shirodemo.sys.model.dto.UserRolePermissionDTO">
+        select u.id,u.username,u.login_name,
+               r.id as roleId,r.name as roleName,
+               p.id as permissionId,p.name as permissionName,p.code as permissionCode
+        from t_sys_user u
+                 left join t_sys_user_role ur on u.id=ur.user_id
+                 left join t_sys_role r on r.id=ur.role_id
+                 left join t_sys_role_permission rp on rp.role_id=ur.role_id
+                 left join t_sys_permission p on p.id=rp.permission_id
+                 <where>
+                     <if test="userId != null and userId!='' ">
+                         u.id=#{userId}
+                     </if>
+                     <if test="roleId != null and roleId!='' ">
+                         r.id=#{roleId}
+                     </if>
+
+                     <if test="name != null and name!='' ">
+                         p.name like concat('%',#{name},'%')
+                     </if>
+                     <if test="code != null and code!='' ">
+                         p.code=#{code}
+                     </if>
+
+                 </where>
+        ORDER BY u.username,r.name,p.name;
+    </select>
+
+    <select id="getPermissionList"
+            parameterType="com.example.shirodemo.sys.model.dto.UserRolePermissionDTO"
+            resultType="com.example.shirodemo.sys.model.SysPermission">
+        select p.*
+        from t_sys_permission p
+        left join t_sys_role_permission rp on rp.permission_id=p.id
+        left join t_sys_user_role ur on ur.role_id=rp.role_id
+        <where>
+            <if test="userId != null and userId!='' ">
+                ur.user_id=#{userId}
+            </if>
+
+            <if test="roleId != null and roleId!=''">
+                ur.role_id=#{roleId}
+            </if>
+        </where>
+        ORDER BY p.name;
+    </select>
+
+
+
+</mapper>

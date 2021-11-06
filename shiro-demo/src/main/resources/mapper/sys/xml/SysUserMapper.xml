@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.shirodemo.sys.mapper.SysUserMapper">
+
+    <select id="getUserInfo" resultType="com.example.shirodemo.sys.model.dto.SysUserDTO">
+        select u.* from t_sys_user u where u.id=#{id}
+        ORDER BY U.username;
+    </select>
+
+    <select id="getUserListInfo"
+            parameterType="com.example.shirodemo.sys.model.SysUser"
+            resultType="com.example.shirodemo.sys.model.SysUser">
+        select u.* from t_sys_user u
+        <where>
+            <if test="id != null">
+                u.id=#{id}
+            </if>
+            <if test="username != null and username !='' ">
+                u.username like concat('%',#{username},'%')
+            </if>
+            <if test="loginName != null and loginName !='' ">
+                u.login_name like concat('%',#{loginName},'%')
+            </if>
+        </where>
+        ORDER BY u.username;
+    </select>
+</mapper>
